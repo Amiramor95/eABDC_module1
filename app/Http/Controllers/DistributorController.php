@@ -2399,7 +2399,7 @@ class DistributorController extends Controller
     {
         try {
             $data = DB::table('distributor_management.DISTRIBUTOR AS A')
-                ->select('*', 'A.DISTRIBUTOR_ID', 'A.DIST_NAME', 'TS.TS_PARAM')
+                ->select('*', 'A.DISTRIBUTOR_ID', 'A.DIST_NAME')
                 ->leftjoin('DISTRIBUTOR_STATUS AS B', 'B.DIST_ID', '=', 'A.DISTRIBUTOR_ID')
                 ->leftJoin('admin_management.TASK_STATUS as TS', 'TS.TS_ID', '=', 'B.DIST_APPROVAL_STATUS')
                 // ->where('B.DIST_VALID_STATUS', 1)
