@@ -1,0 +1,81 @@
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>FiMM Registration API Documentation</title>
+  <link rel="stylesheet" type="text/css" href="./api-docs/swagger-ui.css">
+  <link rel="icon" type="image/png" href="./api-docs/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="./api-docs/favicon-16x16.png" sizes="16x16" />
+  <style>
+    html {
+      box-sizing: border-box;
+      overflow: -moz-scrollbars-vertical;
+      overflow-y: scroll;
+    }
+
+    *,
+    *:before,
+    *:after {
+      box-sizing: inherit;
+    }
+
+    body {
+      margin: 0;
+      background: #fafafa;
+    }
+
+    .topbar-wrapper img {
+      content: url('fimm-api.png');
+    }
+  </style>
+</head>
+
+<body>
+  <div id="swagger-ui"></div>
+
+  <script src="./api-docs/swagger-ui-bundle.js" charset="UTF-8"> </script>
+  <script src="./api-docs/swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
+  <script>
+    window.onload = function () {
+      // Begin Swagger UI call region
+      const ui = SwaggerUIBundle({
+        urls: [
+          { url: "./api-docs/module0.json", name: "Administration Module" },
+          { url: "./api-docs/module1.json", name: "Company Module" },
+          { url: "./api-docs/module2.json", name: "Consultant Module" },
+          { url: "./api-docs/module3.json", name: "Consultant Alert Module" },
+          { url: "./api-docs/module4.json", name: "CPD Module" },
+          { url: "./api-docs/module5.json", name: "FMS Module" },
+          { url: "./api-docs/module6.json", name: "Finance Module" },
+          { url: "./api-docs/module7.json", name: "AMSF Module" },
+        ],
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        plugins: [
+          SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout",
+
+        requestInterceptor: (req) => {
+
+          if (req.headers.Authorization) {
+            req.headers.Authorization = "Bearer " + req.headers.Authorization;
+          }
+          return req;
+        }
+
+      })
+      // End Swagger UI call region
+
+      window.ui = ui
+    }
+  </script>
+</body>
+
+</html>

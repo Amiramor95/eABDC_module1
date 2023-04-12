@@ -1,0 +1,17 @@
+<?php
+
+namespace DummyNamespace;
+
+use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+
+class DummyClass extends Model implements Auditable
+{
+    use \OwenIt\Auditing\Auditable;
+    
+    protected $table = 'DummyTable';
+
+    protected $primaryKey = 'DummyTable_ID';
+
+    public $timestamps = false;
+}

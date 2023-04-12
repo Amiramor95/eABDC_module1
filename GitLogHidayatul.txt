@@ -1,0 +1,104 @@
+2021-04-30 : update dist login
+app/Http/Controllers/AuthController.php
+app/Http/Controllers/DistributorController.php
+app/Http/Controllers/UserController.php
+
+2021-04-29 : Merge remote-tracking branch 'upstream/master'
+2021-04-29 : update
+app/Http/Controllers/DistributorController.php
+
+2021-04-29 : update dist
+app/Http/Controllers/DistributorController.php
+
+2021-04-28 : Merge remote-tracking branch 'upstream/master'
+2021-04-28 : update
+app/Http/Controllers/DistributorController.php
+
+2021-04-28 : Merge remote-tracking branch 'upstream/master'
+2021-04-28 : update
+app/Http/Controllers/DistributorController.php
+
+2021-04-26 : Merge remote-tracking branch 'upstream/master'
+2021-04-26 : update distributor
+app/Helpers/BankruptcyCheck.php
+app/Helpers/CurrentUser.php
+app/Http/Controllers/DistributorController.php
+
+2021-04-24 : Merge remote-tracking branch 'upstream/master'
+2021-04-24 : update
+app/Http/Controllers/DistributorController.php
+routes/api.php
+
+2021-04-23 : Merge remote-tracking branch 'upstream/master'
+2021-04-23 : update
+app/Http/Controllers/DistributorApprovalController.php
+app/Http/Controllers/DistributorController.php
+app/Http/Controllers/DistributorStatusController.php
+app/Http/Controllers/SuspensionController.php
+app/Models/DistributorApproval.php
+config/realm.php
+modelGenerator.php
+routes/api.php
+
+2021-04-21 : update
+app/Http/Controllers/DistributorController.php
+
+2021-04-20 : Merge remote-tracking branch 'upstream/master'
+2021-04-20 : update
+app/Helpers/CurrentUser.php
+app/Http/Controllers/AuthController.php
+app/Http/Controllers/DistributorController.php
+app/Http/Controllers/DistributorDirectorController.php
+app/Http/Controllers/UserController.php
+routes/api.php
+
+2021-04-19 : Merge remote-tracking branch 'upstream/master'
+2021-04-19 : update
+app/Http/Controllers/DistributorController.php
+app/Http/Controllers/UserController.php
+public/api-docs/module1.json
+
+2021-04-19 : Merge remote-tracking branch 'upstream/master'
+2021-04-19 : update
+app/Http/Controllers/DistributorController.php
+public/api-docs/module1.json
+
+2021-04-19 : Merge remote-tracking branch 'upstream/master'
+2021-04-19 : Merge remote-tracking branch 'upstream/master'
+2021-04-19 : update
+app/Http/Controllers/AuthController.php
+
+2021-04-18 : Merge remote-tracking branch 'upstream/master'
+2021-04-18 : update
+GitLogHidayatul.txt
+app/Http/Controllers/AuthController.php
+app/Http/Controllers/DistributorController.php
+app/Http/Controllers/DistributorDirectorController.php
+app/Models/DistributorDirector.php
+routes/api.php
+
+2021-04-15 : Merge remote-tracking branch 'upstream/master'
+2021-04-15 : Merge remote-tracking branch 'upstream/master'
+2021-04-07 : update
+app/Http/Controllers/DistributorController.php
+app/Models/User.php
+
+2021-04-06 : update
+app/Http/Controllers/DistributorAddressController.php
+app/Http/Controllers/DistributorController.php
+app/Http/Controllers/DistributorDocumentController.php
+app/Http/Controllers/DistributorTypeController.php
+app/Models/DistributorAddress.php
+app/Models/DistributorDocument.php
+app/Models/DistributorType.php
+modelGenerator.php
+routes/api.php
+
+2021-04-05 : update distributor
+app/Http/Controllers/AuthController.php
+app/Http/Controllers/DistributorController.php
+app/Http/Controllers/UserController.php
+app/Models/Distributor.php
+modelGenerator.php
+public/api-docs/module1.json
+routes/api.php
