@@ -2399,31 +2399,31 @@ class DistributorController extends Controller
     {
         try {
             $data = DB::table('distributor_management.DISTRIBUTOR AS A')
-                ->select('*', 'A.DISTRIBUTOR_ID', 'A.DIST_NAME')
-                ->leftjoin('DISTRIBUTOR_STATUS AS B', 'B.DIST_ID', '=', 'A.DISTRIBUTOR_ID')
-                ->leftJoin('admin_management.TASK_STATUS as TS', 'TS.TS_ID', '=', 'B.DIST_APPROVAL_STATUS')
-                // ->where('B.DIST_VALID_STATUS', 1)
-                ->orderBy('A.CREATE_TIMESTAMP', 'DESC');
+                ->select('*', 'A.DISTRIBUTOR_ID', 'A.DIST_NAME');
+            // ->leftjoin('DISTRIBUTOR_STATUS AS B', 'B.DIST_ID', '=', 'A.DISTRIBUTOR_ID')
+            // ->leftJoin('admin_management.TASK_STATUS as TS', 'TS.TS_ID', '=', 'B.DIST_APPROVAL_STATUS')
+            // // ->where('B.DIST_VALID_STATUS', 1)
+            // ->orderBy('A.CREATE_TIMESTAMP', 'DESC');
 
             // filters
-            if ($params = $request->get('filters')) {
-                $filters = json_decode($params, true);
+            // if ($params = $request->get('filters')) {
+            //     $filters = json_decode($params, true);
 
-                if (array_key_exists('DIST_NAME', $filters) && $filters['DIST_NAME']) {
-                    $data->where('A.DIST_NAME', $filters['DIST_NAME']);
-                }
+            //     if (array_key_exists('DIST_NAME', $filters) && $filters['DIST_NAME']) {
+            //         $data->where('A.DIST_NAME', $filters['DIST_NAME']);
+            //     }
 
-                if (array_key_exists('REG_NUM', $filters) && $filters['REG_NUM']) {
-                    $data->where('A.DIST_REGI_NUM1', $filters['REG_NUM']);
-                }
+            //     if (array_key_exists('REG_NUM', $filters) && $filters['REG_NUM']) {
+            //         $data->where('A.DIST_REGI_NUM1', $filters['REG_NUM']);
+            //     }
 
-                if (array_key_exists('NEW_REG_NUM', $filters) && $filters['NEW_REG_NUM']) {
-                    $data->where('A.DIST_REGI_NUM2', $filters['NEW_REG_NUM']);
-                }
-                if (array_key_exists('STATUS', $filters) && $filters['STATUS']) {
-                    $data->where('TS.TS_PARAM', $filters['STATUS']);
-                }
-            }
+            //     if (array_key_exists('NEW_REG_NUM', $filters) && $filters['NEW_REG_NUM']) {
+            //         $data->where('A.DIST_REGI_NUM2', $filters['NEW_REG_NUM']);
+            //     }
+            //     if (array_key_exists('STATUS', $filters) && $filters['STATUS']) {
+            //         $data->where('TS.TS_PARAM', $filters['STATUS']);
+            //     }
+            // }
             $data = $data->orderBy('A.CREATE_TIMESTAMP')->get();
             http_response_code(200);
             return response([
