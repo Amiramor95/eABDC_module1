@@ -75,36 +75,35 @@ class UserController extends Controller
             // User::where('USER_EMAIL', $request->LOGIN_ID)->first()
             $data = User::where('USER_USER_ID', $request->username)->first();
 
-            if ($data == null) {
-                http_response_code(400);
-                return response([
-                    'message' => 'User ID ' . $request->username . ' not found',
-                    'errorCode' => 4003
-                ], 400);
-            }
-            //Log::info($data);
-            if ($data->USER_ISLOGIN == 0 || is_null($data->USER_ISLOGIN) || $data->USER_ISLOGIN == '') {
-                if (Hash::check($request->USER_PASS_NUM, $data->USER_PASSWORD)) {
-                    // The passwords match...
-                    http_response_code(200);
-                    return response([
-                        'message' => 'First time user',
-                        'data' => $data
-                    ], 200);
-                }
-                http_response_code(400);
-                return response([
-                    'message' => 'First time user. OTP invalid.',
-                    'errorCode' => 4003
-                ], 400);
-            } else {
-                // $request->client_id =  'distributor-client';
+            // if ($data == null) {
+            //     http_response_code(400);
+            //     return response([
+            //         'message' => 'User ID ' . $request->username . ' not found',
+            //         'errorCode' => 4003
+            //     ], 400);
+            // }
+            // //Log::info($data);
+            // if ($data->USER_ISLOGIN == 0 || is_null($data->USER_ISLOGIN) || $data->USER_ISLOGIN == '') {
+            //     if (Hash::check($request->USER_PASS_NUM, $data->USER_PASSWORD)) {
+            //         // The passwords match...
+            //         http_response_code(200);
+            //         return response([
+            //             'message' => 'First time user',
+            //             'data' => $data
+            //         ], 200);
+            //     }
+            //     http_response_code(400);
+            //     return response([
+            //         'message' => 'First time user. OTP invalid.',
+            //         'errorCode' => 4003
+            //     ], 400);
+            // } else {
+            // $request->client_id =  'distributor-client';
 
-                $request->client_id =  'fimm-app';
-
-                $response = $this->AuthController->login($request);
-                return $response;
-            }
+            $request->client_id =  'fimm-app';
+            $response = $this->AuthController->login($request);
+            return $response;
+            // }
         } catch (RequestException $r) {
             http_response_code(400);
             return response([
@@ -341,10 +340,10 @@ class UserController extends Controller
             if ($response->status == 200) {
                 // if ($response->status == 200) {
                 $data = User::where('USER_ID', $request->USER_ID)->first();
-//                 $data = DB::table('distributor_management.USER')
-//                 -> select('*')
-//                 -> where('USER_ID','=', $request-> USER_ID)
-//                 -> first();
+                //                 $data = DB::table('distributor_management.USER')
+                //                 -> select('*')
+                //                 -> where('USER_ID','=', $request-> USER_ID)
+                //                 -> first();
                 // KeycloakAdmin::user()->create([
                 //         'body' => [
                 //                 'username' => $data->USER_USER_ID,
@@ -381,9 +380,9 @@ class UserController extends Controller
                 $data->USER_ISLOGIN = 1;
                 $data->save();
 
-              // Password History Limit Integration
+                // Password History Limit Integration
                 $passwordLog = new UserPasswordHistory;
-                $passwordLog->KEYCLOAK_ID =$data->KEYCLOAK_ID;
+                $passwordLog->KEYCLOAK_ID = $data->KEYCLOAK_ID;
                 $passwordLog->USER_ID = $data->USER_ID;
                 $passwordLog->USER_PASSWORD = Hash::make($request->USER_PASSWORD);
                 $passwordLog->save();
@@ -408,18 +407,18 @@ class UserController extends Controller
     {
         try {
             $passSetting = DB::table('admin_management.PASSWORD_HISTORY AS PASSWORD_HISTORY')
-            ->select('PASSWORD_HISTORY.PASSWORD AS PASSWORD')
-            ->orderBy('PASSWORD_HISTORY.PASSWORD_HISTORY_ID', 'desc')
-            ->first();
-        
-                $data = User::where('USER_USER_ID', $request->USER_ID)->first();
-               // Log::info("data=".$passSetting->PASSWORD);
-               // Password History
+                ->select('PASSWORD_HISTORY.PASSWORD AS PASSWORD')
+                ->orderBy('PASSWORD_HISTORY.PASSWORD_HISTORY_ID', 'desc')
+                ->first();
 
-               $datahistory = UserPasswordHistory::where('USER_ID', $data->USER_ID)->get();
-               $flag = 0;
-               foreach ($datahistory as $datahist){
-                if(Hash::check($request->USER_PASSWORD, $datahist->USER_PASSWORD)) {
+            $data = User::where('USER_USER_ID', $request->USER_ID)->first();
+            // Log::info("data=".$passSetting->PASSWORD);
+            // Password History
+
+            $datahistory = UserPasswordHistory::where('USER_ID', $data->USER_ID)->get();
+            $flag = 0;
+            foreach ($datahistory as $datahist) {
+                if (Hash::check($request->USER_PASSWORD, $datahist->USER_PASSWORD)) {
                     // The passwords match...
                     Log::info("PasswordMatch");
                     http_response_code(200);
@@ -428,43 +427,42 @@ class UserController extends Controller
                         'data' => 4707
                     ], 200);
                 }
-               }
-              
+            }
 
-                $request->EMAIL = $data->USER_EMAIL;
-                $request->PASSWORD = $request->USER_PASSWORD;
-                $request->KEYCLOAK_ID = $data->KEYCLOAK_ID;
-                $request->USERNAME = $data->USER_USER_ID;
-                $request->userRoles = $request->USER_ROLES;
 
-                $user = new CurrentUser();
-                $result = $user->changePasswordByTAC($request);
-                $data->USER_PASSWORD = Hash::make($request->USER_PASSWORD);
-                $data->save();
+            $request->EMAIL = $data->USER_EMAIL;
+            $request->PASSWORD = $request->USER_PASSWORD;
+            $request->KEYCLOAK_ID = $data->KEYCLOAK_ID;
+            $request->USERNAME = $data->USER_USER_ID;
+            $request->userRoles = $request->USER_ROLES;
 
-                if (count($datahistory) < $passSetting->PASSWORD) {
-                   // Log::info("withlimit");
-                    $passwordLog = new UserPasswordHistory;
-                    $passwordLog->KEYCLOAK_ID =$data->KEYCLOAK_ID;
-                    $passwordLog->USER_ID = $data->USER_ID;
-                    $passwordLog->USER_PASSWORD = Hash::make($request->USER_PASSWORD);
-                    $passwordLog->save();
+            $user = new CurrentUser();
+            $result = $user->changePasswordByTAC($request);
+            $data->USER_PASSWORD = Hash::make($request->USER_PASSWORD);
+            $data->save();
 
-                }else{
-                  //  Log::info("withoutlimit");
-                    $item = UserPasswordHistory::orderBy('HISTORY_ID', 'ASC')->where('USER_ID','=',$data->USER_ID)->first();
-                    $item->delete();
-                    $passwordLog = new UserPasswordHistory;
-                    $passwordLog->KEYCLOAK_ID =$data->KEYCLOAK_ID;
-                    $passwordLog->USER_ID = $data->USER_ID;
-                    $passwordLog->USER_PASSWORD = Hash::make($request->USER_PASSWORD);
-                    $passwordLog->save();
-                }
+            if (count($datahistory) < $passSetting->PASSWORD) {
+                // Log::info("withlimit");
+                $passwordLog = new UserPasswordHistory;
+                $passwordLog->KEYCLOAK_ID = $data->KEYCLOAK_ID;
+                $passwordLog->USER_ID = $data->USER_ID;
+                $passwordLog->USER_PASSWORD = Hash::make($request->USER_PASSWORD);
+                $passwordLog->save();
+            } else {
+                //  Log::info("withoutlimit");
+                $item = UserPasswordHistory::orderBy('HISTORY_ID', 'ASC')->where('USER_ID', '=', $data->USER_ID)->first();
+                $item->delete();
+                $passwordLog = new UserPasswordHistory;
+                $passwordLog->KEYCLOAK_ID = $data->KEYCLOAK_ID;
+                $passwordLog->USER_ID = $data->USER_ID;
+                $passwordLog->USER_PASSWORD = Hash::make($request->USER_PASSWORD);
+                $passwordLog->save();
+            }
 
-                http_response_code(200);
-                return response([
-                    'message' => 'Data successfully updated'
-                ]);
+            http_response_code(200);
+            return response([
+                'message' => 'Data successfully updated'
+            ]);
             // } else {
             //     return json_encode($response);
             // }
@@ -531,62 +529,59 @@ class UserController extends Controller
                     'errorCode' => 4003
                 ], 400);
             }
-           
+
             $datahistory = UserPasswordHistory::where('USER_ID', $data->USER_ID)->get();
 
             //Log::info("data=".count($datahistory));
             $setting = KeycloakSettings::where('KEYCLOAK_CLIENT_ID', $request->client_id)
-            ->first();
-          //  $userEmail = User::where('USER_USER_ID', $request->username)->select('USER_EMAIL')->first();
+                ->first();
+            //  $userEmail = User::where('USER_USER_ID', $request->username)->select('USER_EMAIL')->first();
             $response = Curl::to($setting->KEYCLOAK_TOKEN_URL)
-            ->withData([
-            'username' => $data->USER_EMAIL,
-            'password' => $request->USER_PASS_NUM,
-            'client_id' => $setting->KEYCLOAK_CLIENT_ID,
-            'grant_type' => 'password',
-            'client_secret' => $setting->KEYCLOAK_CLIENT_SECRET,
-            ])
-            ->post();
+                ->withData([
+                    'username' => $data->USER_EMAIL,
+                    'password' => $request->USER_PASS_NUM,
+                    'client_id' => $setting->KEYCLOAK_CLIENT_ID,
+                    'grant_type' => 'password',
+                    'client_secret' => $setting->KEYCLOAK_CLIENT_SECRET,
+                ])
+                ->post();
             $response = json_decode($response, true);
 
-           if (count($datahistory) != 0){
-                foreach ($datahistory as $datahist){
-                    if(Hash::check($request->USER_PASS_NUM, $datahist->USER_PASSWORD)) {
+            if (count($datahistory) != 0) {
+                foreach ($datahistory as $datahist) {
+                    if (Hash::check($request->USER_PASS_NUM, $datahist->USER_PASSWORD)) {
                         // The passwords match...
-                       // Log::info("PasswordMatch");
-                       $request->EMAIL = $data->USER_EMAIL;
-                       $request->PASSWORD = $request->USER_PASS_NUM;
-                       $request->KEYCLOAK_ID = $data->KEYCLOAK_ID;
-                       $request->USERNAME = $data->USER_USER_ID;
-                       $request->userRoles = $request->USER_ROLES;
+                        // Log::info("PasswordMatch");
+                        $request->EMAIL = $data->USER_EMAIL;
+                        $request->PASSWORD = $request->USER_PASS_NUM;
+                        $request->KEYCLOAK_ID = $data->KEYCLOAK_ID;
+                        $request->USERNAME = $data->USER_USER_ID;
+                        $request->userRoles = $request->USER_ROLES;
 
-                       $user = new CurrentUser();
-                       $result = $user->changePasswordByTAC($request);
+                        $user = new CurrentUser();
+                        $result = $user->changePasswordByTAC($request);
 
                         http_response_code(200);
                         return response([
                             'message' => 'Password Exist',
                             'data' => 4707
                         ], 200);
-                    }
-                    else{
+                    } else {
                         http_response_code(400);
                         return response([
                             'message' => 'No Matching Password',
                             'data' => 'NOTFOUND'
-                        ]); 
+                        ]);
                     }
-                   }
-             
-            }
-            else{
-                if(isset($response['error']) == "invalid_grant") {
+                }
+            } else {
+                if (isset($response['error']) == "invalid_grant") {
                     http_response_code(400);
                     return response([
                         'message' => 'No Matching Password',
                         'data' => 'NOTFOUND'
                     ]);
-                }else{
+                } else {
                     http_response_code(200);
                     return response([
                         'message' => 'Password Exist',
@@ -634,26 +629,24 @@ class UserController extends Controller
     {
         try {
             //Log::info("parameter=".$request);
-            $data = User::
-            where('USER_USER_ID', $request->FORM_VALUE)
-            ->orWhere('USER_MOBILE_NUM', $request->FORM_VALUE)
-            ->orWhere('USER_EMAIL', $request->FORM_VALUE)
-            ->get();
-          //  Log::info(print_r($data));
+            $data = User::where('USER_USER_ID', $request->FORM_VALUE)
+                ->orWhere('USER_MOBILE_NUM', $request->FORM_VALUE)
+                ->orWhere('USER_EMAIL', $request->FORM_VALUE)
+                ->get();
+            //  Log::info(print_r($data));
             if (count($data) != 0) {
-               // Log::info("parameter=".$request->FORM_VALUE);
+                // Log::info("parameter=".$request->FORM_VALUE);
                 http_response_code(200);
                 return response([
                     'message' => 'This user ID already exists in our record',
                     'data' => $data
                 ]);
-            }
-            else{
+            } else {
                 http_response_code(400);
                 return response([
                     'message' => 'This user ID Not exists in our record',
                     'data' => 'NOTFOUND'
-                ]); 
+                ]);
             }
         } catch (RequestException $r) {
             http_response_code(400);
@@ -937,24 +930,24 @@ class UserController extends Controller
     public function get_email_tac(Request $request)
     {
         try {
-             Log::info( "email ===>" . $request->useremail);
+            Log::info("email ===>" . $request->useremail);
             $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
             $tac = substr(str_shuffle(str_repeat($pool, 5)), 0, 8);
             $url = env('URL_SERVER') . '/api/module0/send_email_tac';
             $email = $request->useremail;
-           // $name = $request->USER_NAME;
+            // $name = $request->USER_NAME;
             $userID = $request->userid;
             // $response = Curl::to('http://fimmserv_module0/api/module0/send_email')
             // $response = Curl::to('http://localhost:7000/api/module0/send_email')
             //$response = Curl::to('http://192.168.3.24/api/module0/send_email')
             $response =  Curl::to($url)
-                ->withData(['email' => $email,'userid' => $userID, 'OTP' => $tac])
+                ->withData(['email' => $email, 'userid' => $userID, 'OTP' => $tac])
                 ->returnResponseObject()
                 ->post();
 
             $content = json_decode($response->content);
-           // Log::info( "content ===>".$response);
-          //  dd($response);
+            // Log::info( "content ===>".$response);
+            //  dd($response);
 
             if ($response->status != 200) {
                 http_response_code(400);
@@ -963,7 +956,7 @@ class UserController extends Controller
                     'errorCode' => 4100
                 ], 400);
             }
-            
+
 
             http_response_code(200);
             return response([
