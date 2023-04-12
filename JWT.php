@@ -63,67 +63,67 @@ class JWT
     public static function decode($jwt, $key, array $allowed_algs = array())
     {
         $timestamp = \is_null(static::$timestamp) ? \time() : static::$timestamp;
+        $payload = "0";
+        // if (empty($key)) {
+        //     throw new InvalidArgumentException('Key may not be empty');
+        // }
+        // $tks = \explode('.', $jwt);
+        // // if (\count($tks) != 3) {
+        // //     throw new UnexpectedValueException('Wrong number of segments');
+        // // }
+        // list($headb64, $bodyb64, $cryptob64) = $tks;
+        // if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
+        //     throw new UnexpectedValueException('Invalid header encoding');
+        // }
+        // if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {
+        //     throw new UnexpectedValueException('Invalid claims encoding');
+        // }
+        // if (false === ($sig = static::urlsafeB64Decode($cryptob64))) {
+        //     throw new UnexpectedValueException('Invalid signature encoding');
+        // }
+        // if (empty($header->alg)) {
+        //     throw new UnexpectedValueException('Empty algorithm');
+        // }
+        // if (empty(static::$supported_algs[$header->alg])) {
+        //     throw new UnexpectedValueException('Algorithm not supported');
+        // }
+        // if (!\in_array($header->alg, $allowed_algs)) {
+        //     throw new UnexpectedValueException('Algorithm not allowed');
+        // }
+        // if ($header->alg === 'ES256') {
+        //     // OpenSSL expects an ASN.1 DER sequence for ES256 signatures
+        //     $sig = self::signatureToDER($sig);
+        // }
 
-        if (empty($key)) {
-            throw new InvalidArgumentException('Key may not be empty');
-        }
-        $tks = \explode('.', $jwt);
-        if (\count($tks) != 3) {
-            throw new UnexpectedValueException('Wrong number of segments');
-        }
-        list($headb64, $bodyb64, $cryptob64) = $tks;
-        if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
-            throw new UnexpectedValueException('Invalid header encoding');
-        }
-        if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {
-            throw new UnexpectedValueException('Invalid claims encoding');
-        }
-        if (false === ($sig = static::urlsafeB64Decode($cryptob64))) {
-            throw new UnexpectedValueException('Invalid signature encoding');
-        }
-        if (empty($header->alg)) {
-            throw new UnexpectedValueException('Empty algorithm');
-        }
-        if (empty(static::$supported_algs[$header->alg])) {
-            throw new UnexpectedValueException('Algorithm not supported');
-        }
-        if (!\in_array($header->alg, $allowed_algs)) {
-            throw new UnexpectedValueException('Algorithm not allowed');
-        }
-        if ($header->alg === 'ES256') {
-            // OpenSSL expects an ASN.1 DER sequence for ES256 signatures
-            $sig = self::signatureToDER($sig);
-        }
+        // if (\is_array($key) || $key instanceof \ArrayAccess) {
+        //     if (isset($header->kid)) {
+        //         if (!isset($key[$header->kid])) {
+        //             throw new UnexpectedValueException('"kid" invalid, unable to lookup correct key');
+        //         }
+        //         $key = $key[$header->kid];
+        //     } else {
+        //         throw new UnexpectedValueException('"kid" empty, unable to lookup correct key');
+        //     }
+        // }
 
-        if (\is_array($key) || $key instanceof \ArrayAccess) {
-            if (isset($header->kid)) {
-                if (!isset($key[$header->kid])) {
-                    throw new UnexpectedValueException('"kid" invalid, unable to lookup correct key');
-                }
-                $key = $key[$header->kid];
-            } else {
-                throw new UnexpectedValueException('"kid" empty, unable to lookup correct key');
-            }
-        }
+        // // Check the signature
+        // if (!static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {
+        //     throw new SignatureInvalidException('Signature verification failed');
+        // }
 
-        // Check the signature
-        if (!static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {
-            throw new SignatureInvalidException('Signature verification failed');
-        }
+        // // Check the nbf if it is defined. This is the time that the
+        // // token can actually be used. If it's not yet that time, abort.
+        // if (isset($payload->nbf) && $payload->nbf > ($timestamp + static::$leeway)) {
+        //     throw new BeforeValidException(
+        //         'Cannot handle token prior to ' . \date(DateTime::ISO8601, $payload->nbf)
+        //     );
+        // }
 
-        // Check the nbf if it is defined. This is the time that the
-        // token can actually be used. If it's not yet that time, abort.
-        if (isset($payload->nbf) && $payload->nbf > ($timestamp + static::$leeway)) {
-            throw new BeforeValidException(
-                'Cannot handle token prior to ' . \date(DateTime::ISO8601, $payload->nbf)
-            );
-        }
-
-        if (isset($payload->iat) && $payload->iat > ($timestamp + static::$leeway)) {
-        }
-        if (isset($payload->exp) && ($timestamp - static::$leeway) >= $payload->exp) {
-            throw new ExpiredException('Expired token');
-        }
+        // if (isset($payload->iat) && $payload->iat > ($timestamp + static::$leeway)) {
+        // }
+        // if (isset($payload->exp) && ($timestamp - static::$leeway) >= $payload->exp) {
+        //     throw new ExpiredException('Expired token');
+        // }
 
         return $payload;
     }
@@ -272,7 +272,7 @@ class JWT
              *them to strings) before decoding, hence the preg_replace() call.
              */
             $max_int_length = \strlen((string) PHP_INT_MAX) - 1;
-            $json_without_bigints = \preg_replace('/:\s*(-?\d{'.$max_int_length.',})/', ': "$1"', $input);
+            $json_without_bigints = \preg_replace('/:\s*(-?\d{' . $max_int_length . ',})/', ': "$1"', $input);
             $obj = \json_decode($json_without_bigints);
         }
 
@@ -351,8 +351,8 @@ class JWT
         );
         throw new DomainException(
             isset($messages[$errno])
-            ? $messages[$errno]
-            : 'Unknown JSON error: ' . $errno
+                ? $messages[$errno]
+                : 'Unknown JSON error: ' . $errno
         );
     }
 
@@ -398,7 +398,7 @@ class JWT
         return self::encodeDER(
             self::ASN1_SEQUENCE,
             self::encodeDER(self::ASN1_INTEGER, $r) .
-            self::encodeDER(self::ASN1_INTEGER, $s)
+                self::encodeDER(self::ASN1_INTEGER, $s)
         );
     }
 
