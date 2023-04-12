@@ -2400,9 +2400,9 @@ class DistributorController extends Controller
         try {
             $data = DB::table('distributor_management.DISTRIBUTOR AS A')
                 ->select('*', 'A.DISTRIBUTOR_ID', 'A.DIST_NAME', 'TS.TS_PARAM')
-                ->join('DISTRIBUTOR_STATUS AS B', 'B.DIST_ID', '=', 'A.DISTRIBUTOR_ID')
+                ->leftjoin('DISTRIBUTOR_STATUS AS B', 'B.DIST_ID', '=', 'A.DISTRIBUTOR_ID')
                 ->leftJoin('admin_management.TASK_STATUS as TS', 'TS.TS_ID', '=', 'B.DIST_APPROVAL_STATUS')
-                ->where('B.DIST_VALID_STATUS', 1)
+                // ->where('B.DIST_VALID_STATUS', 1)
                 ->orderBy('A.CREATE_TIMESTAMP', 'DESC');
 
             // filters
@@ -2424,10 +2424,7 @@ class DistributorController extends Controller
                     $data->where('TS.TS_PARAM', $filters['STATUS']);
                 }
             }
-
-
             $data = $data->orderBy('A.CREATE_TIMESTAMP')->get();
-
             http_response_code(200);
             return response([
                 'message' => 'All data successfully retrieved.',
